@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Todo</string>
+    <string name="add">+ ADD</string>
+    <string name="task_title">Task\'s Title</string>
+    <string name="deadline">Deadline:</string>
+    <string name="april_27th_2023_09_30_am">April 27th, 2023 09:30 AM</string>
+    <string name="enter_your_new_task">Enter your new task...</string>
+    <string name="new_task_s_deadline">New task\'s deadline</string>
+    <string name="dd_mm_yyyy">dd/mm/yyyy</string>
+    <string name="hh_mm">hh:mm</string>
+    <string name="no_deadline">NO DEADLINE</string>
+</resources>
