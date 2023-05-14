@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Todo</string>
+    <string name="add">+ Thêm</string>
+    <string name="task_title">Tiêu đề</string>
+    <string name="deadline">Hạn chót:</string>
+    <string name="april_27th_2023_09_30_am">April 27th, 2023 09:30 AM</string>
+    <string name="enter_your_new_task">Thêm việc cần làm mới...</string>
+    <string name="new_task_s_deadline">Hạn chót của việc cần làm mới</string>
+    <string name="select_date">Chọn ngày</string>
+    <string name="select_time">Chọn giờ</string>
+    <string name="no_deadline">Không có</string>
+    <string name="delete_task_question">Xóa việc cần làm này?</string>
+    <string name="are_you_sure_that_you_want_to_delete_this_task">Bạn có chắc bạn muốn xóa việc cần làm này không?</string>
+    <string name="cancel">Hủy</string>
+    <string name="yes">Có</string>
+</resources>

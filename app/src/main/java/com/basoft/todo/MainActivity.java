@@ -14,8 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.time.LocalDateTime;
 import java.util.Calendar;
 
@@ -26,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     static Calendar calendar = Calendar.getInstance();
     private static final int DEFAULT_DEADLINE_YEAR = calendar.get(Calendar.YEAR);
     private static final int DEFAULT_DEADLINE_MONTH = calendar.get(Calendar.MONTH);
-    private static final int DEFAULT_DEADLINE_DAY = calendar.get(Calendar.DAY_OF_MONTH) + 1;
+    private static final int DEFAULT_DEADLINE_DAY = calendar.get(Calendar.DAY_OF_MONTH);
     private EditText newTaskEditText;
     private Button newTaskSubmitButton, newTaskDeadlineDateButton, newTaskDeadlineTimeButton;
     private RecyclerView tasksRecyclerView;
@@ -71,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private final View.OnClickListener newTaskSubmitListener = new View.OnClickListener() {
+        @SuppressLint("NotifyDataSetChanged")
         @Override
         public void onClick(View v) {
             String newTaskTitle = newTaskEditText.getText().toString().trim();
@@ -80,15 +79,17 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            TaskTodo newTask;
+            TaskTodo newTask = new TaskTodo(newTaskTitle);
 
-            if (deadlineYear == null) newTask = new TaskTodo(newTaskTitle);
-            else newTask = new TaskTodo(newTaskTitle, LocalDateTime.of(
-                    deadlineYear, deadlineMonth + 1, deadlineDay, deadlineHour, deadlineMinute
-            ));
+            if (deadlineYear != null && deadlineHour != null)
+                newTask = new TaskTodo(newTaskTitle, LocalDateTime.of(
+                        deadlineYear, deadlineMonth + 1, deadlineDay,
+                        deadlineHour, deadlineMinute
+                ));
 
             DataManager dataManager = DataManager.getInstance();
-            taskAdapter.notifyItemInserted(dataManager.addTask(newTask));
+            dataManager.addTask(newTask);
+            taskAdapter.notifyDataSetChanged();
             resetViews();
         }
     };
@@ -96,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
     private void resetViews() {
         newTaskEditText.setText("");
         deadlineYear = deadlineMonth = deadlineDay = deadlineHour = deadlineMinute = null;
-        newTaskDeadlineTimeButton.setText(R.string.hh_mm);
-        newTaskDeadlineDateButton.setText(R.string.dd_mm_yyyy);
+        newTaskDeadlineTimeButton.setText(R.string.select_time);
+        newTaskDeadlineDateButton.setText(R.string.select_date);
     }
 
     private final View.OnClickListener deadlineDateSelectListener = new View.OnClickListener() {
@@ -105,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             OnDateSetListener onDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
                 setDeadlineDate(year, monthOfYear, dayOfMonth);
-                setDeadlineTime(DEFAULT_DEADLINE_HOUR, DEFAULT_DEADLINE_MINUTE);
+                if (deadlineHour == null || deadlineMinute == null)
+                    setDeadlineTime(DEFAULT_DEADLINE_HOUR, DEFAULT_DEADLINE_MINUTE);
             };
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -127,21 +129,20 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private final View.OnClickListener deadlineTimeSelectListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    private final View.OnClickListener deadlineTimeSelectListener = v -> {
 
-            OnTimeSetListener onTimeSetListener = (view, hourOfDay, minute) -> {
-                setDeadlineTime(hourOfDay, minute);
-            };
+        OnTimeSetListener onTimeSetListener = (view, hourOfDay, minute) -> {
+            setDeadlineTime(hourOfDay, minute);
+            if (deadlineYear == null || deadlineMonth == null || deadlineDay == null)
+                setDeadlineDate(DEFAULT_DEADLINE_YEAR, DEFAULT_DEADLINE_MONTH, DEFAULT_DEADLINE_DAY);
+        };
 
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    MainActivity.this, onTimeSetListener,
-                    DEFAULT_DEADLINE_HOUR, DEFAULT_DEADLINE_MINUTE, true
-            );
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                MainActivity.this, onTimeSetListener,
+                DEFAULT_DEADLINE_HOUR, DEFAULT_DEADLINE_MINUTE, true
+        );
 
-            timePickerDialog.show();
-        }
+        timePickerDialog.show();
     };
 
     @SuppressLint("DefaultLocale")

@@ -1,12 +1,15 @@
 package com.basoft.todo;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private ArrayList<TaskTodo> tasks;
-    private Context context;
+    Context context;
 
     public TaskAdapter(ArrayList<TaskTodo> tasks, Context context) {
         this.tasks = tasks;
@@ -35,12 +38,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskTodo task = tasks.get(position);
         holder.titleTextView.setText(task.getTitle());
-        if (task.isDone()) {
-            holder.titleTextView.setPaintFlags(
-                    holder.titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
-            );
-            holder.checkBox.setChecked(true);
-        }
+        holder.setViewsIsDoneState(task.isDone());
         holder.deadlineTextView.setText(task.getDeadlineString(context));
     }
 
@@ -49,33 +47,90 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
-    public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        private TextView titleTextView, deadlineTextView;
+    public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
+        private TextView titleTextView, deadlineTextView, deadlineLabelTextView;
         private CheckBox checkBox;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             findViews(itemView);
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    DataManager dataManager = DataManager.getInstance();
-                    if (isChecked) {
-                        titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                        dataManager.setTaskDone(getAdapterPosition(), true);
-                    }
-                    else {
-                        titleTextView.setPaintFlags(titleTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-                        dataManager.setTaskDone(getAdapterPosition(), false);
-                    }
-                }
-            });
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> updateOnCheck(isChecked));
+            itemView.setOnClickListener(TaskViewHolder.this);
+            itemView.setOnLongClickListener(TaskViewHolder.this);
+        }
+
+        @SuppressLint("NotifyDataSetChanged")
+        public void updateOnCheck(boolean isChecked) {
+            DataManager dataManager = DataManager.getInstance();
+            if (isChecked) {
+                setViewsIsDoneState(true);
+                dataManager.setTaskDone(getAdapterPosition(), true);
+            }
+            else {
+                setViewsIsDoneState(false);
+                dataManager.setTaskDone(getAdapterPosition(), false);
+            }
+        }
+
+        private void setViewsIsDoneState(boolean isDone) {
+            if (isDone) {
+                checkBox.setChecked(true);
+                titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                titleTextView.setTextColor(Color.GRAY);
+                deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                deadlineTextView.setTextColor(Color.GRAY);
+                deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                deadlineLabelTextView.setTextColor(Color.GRAY);
+            } else {
+                checkBox.setChecked(false);
+                titleTextView.setPaintFlags(titleTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                titleTextView.setTextColor(Color.BLACK);
+                deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                deadlineTextView.setTextColor(Color.BLACK);
+                deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                deadlineLabelTextView.setTextColor(Color.BLACK);
+            }
         }
 
         private void findViews(View itemView) {
             titleTextView = itemView.findViewById(R.id.task_item_title);
             deadlineTextView = itemView.findViewById(R.id.task_item_deadline);
+            deadlineLabelTextView = itemView.findViewById(R.id.task_item_deadline_label);
             checkBox = itemView.findViewById(R.id.task_item_checkbox);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+
+            DialogInterface.OnClickListener onCancelListener = (dialog, which) -> {
+                // Just close the dialog
+            };
+
+            @SuppressLint("NotifyDataSetChanged")
+            DialogInterface.OnClickListener onConfirmListener = (dialog, which) -> {
+                // Delete the task
+                DataManager dataManager = DataManager.getInstance();
+                dataManager.deleteTask(getAdapterPosition());
+                TaskAdapter.this.notifyDataSetChanged();
+            };
+
+            dialogBuilder
+                    .setTitle(R.string.delete_task_question)
+                    .setMessage(R.string.are_you_sure_that_you_want_to_delete_this_task)
+                    .setNegativeButton(R.string.cancel, onCancelListener)
+                    .setPositiveButton(R.string.yes, onConfirmListener);
+
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
+
+            return true;
+        }
+
+        @Override
+        public void onClick(View v) {
+            DataManager dataManager = DataManager.getInstance();
+            updateOnCheck(!dataManager.getTasks().get(getAdapterPosition()).isDone());
         }
     }
 }

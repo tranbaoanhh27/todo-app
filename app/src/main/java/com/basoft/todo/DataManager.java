@@ -48,20 +48,24 @@ public class DataManager {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(tasks);
             objectOutputStream.close();
-            Toast.makeText(context, "Saved Tasks to local storage!", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Log.d("Save tasks error:", e.toString());
         }
     }
 
-    public int addTask(TaskTodo newTask) {
+    public void addTask(TaskTodo newTask) {
         tasks.add(newTask);
-        return tasks.size() - 1;
+        tasks.sort(new TaskTodo.TaskTodoComparator());
     }
 
-    public boolean setTaskDone(int position, boolean isDone) {
-        if (position >= tasks.size()) return false;
+    public void setTaskDone(int position, boolean isDone) {
+        if (position >= tasks.size()) return;
         tasks.get(position).setDone(isDone);
-        return true;
+        tasks.sort(new TaskTodo.TaskTodoComparator());
+    }
+
+    public void deleteTask(int position) {
+        if (position >= tasks.size()) return;
+        tasks.remove(position);
     }
 }
