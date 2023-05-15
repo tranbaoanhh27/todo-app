@@ -3,6 +3,7 @@ package com.basoft.todo;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.Notification;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.os.Bundle;
@@ -90,6 +91,19 @@ public class MainActivity extends AppCompatActivity {
             DataManager dataManager = DataManager.getInstance();
             dataManager.addTask(newTask);
             taskAdapter.notifyDataSetChanged();
+
+            String notificationContent = String.format(
+                    "%s\n%s",
+                    newTask.getTitle(),
+                    newTask.getDeadlineString(MainActivity.this)
+            );
+            Notification notification = NotificationHelper.createNotification(
+                    MainActivity.this,
+                    newTask.getTitle(),
+                    newTask.getDeadlineString(MainActivity.this)
+            );
+            NotificationHelper.scheduleNotification(MainActivity.this, notification, newTask.getDeadline());
+
             resetViews();
         }
     };

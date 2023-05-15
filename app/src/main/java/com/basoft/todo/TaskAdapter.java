@@ -62,19 +62,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         @SuppressLint("NotifyDataSetChanged")
         public void updateOnCheck(boolean isChecked) {
             DataManager dataManager = DataManager.getInstance();
-            if (isChecked) {
-                setViewsIsDoneState(true);
-                dataManager.setTaskDone(getAdapterPosition(), true);
-            }
-            else {
-                setViewsIsDoneState(false);
-                dataManager.setTaskDone(getAdapterPosition(), false);
-            }
+            setViewsIsDoneState(isChecked);
+            dataManager.setTaskDone(getAdapterPosition(), isChecked);
         }
 
         private void setViewsIsDoneState(boolean isDone) {
+            checkBox.setChecked(isDone);
             if (isDone) {
-                checkBox.setChecked(true);
                 titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 titleTextView.setTextColor(Color.GRAY);
                 deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -82,7 +76,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 deadlineLabelTextView.setTextColor(Color.GRAY);
             } else {
-                checkBox.setChecked(false);
                 titleTextView.setPaintFlags(titleTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 titleTextView.setTextColor(Color.BLACK);
                 deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
@@ -113,6 +106,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 DataManager dataManager = DataManager.getInstance();
                 dataManager.deleteTask(getAdapterPosition());
                 TaskAdapter.this.notifyDataSetChanged();
+
+                // TODO: Un-schedule the notification
             };
 
             dialogBuilder

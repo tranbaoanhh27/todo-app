@@ -14,4 +14,5 @@
     <string name="are_you_sure_that_you_want_to_delete_this_task">Bạn có chắc bạn muốn xóa việc cần làm này không?</string>
     <string name="cancel">Hủy</string>
     <string name="yes">Có</string>
+    <string name="hey_it_s_time_to_complete_this_task">Này bạn! Giờ là lúc để hoàn thành nhiệm vụ này đấy!</string>
 </resources>
