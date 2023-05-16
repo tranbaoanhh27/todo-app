@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEEEEE"
+    android:background="@color/main_background"
     tools:context=".MainActivity">
 
     <EditText
@@ -16,8 +16,9 @@
         android:textSize="20sp"
         android:inputType="text"
         android:textColor="@color/black"
+        android:paddingBottom="10dp"
         android:textColorHint="#888888"
-        android:background="@drawable/rounded_white_rectangle"
+        android:background="@drawable/white_3d_background_normal"
         android:hint="@string/enter_your_new_task"
         android:paddingVertical="10dp"
         android:paddingHorizontal="20dp"
@@ -38,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="@id/new_task_deadline_date"
         app:layout_constraintStart_toStartOf="@id/new_task_edittext"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/new_task_deadline_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -46,29 +47,35 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
         android:textColor="@color/white"
+        android:background="@drawable/primary_button"
         app:layout_constraintTop_toBottomOf="@id/new_task_edittext"
         app:layout_constraintStart_toEndOf="@id/new_task_deadline_label"
         app:layout_constraintEnd_toStartOf="@id/new_task_deadline_time" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/new_task_deadline_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:text="@string/select_time"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="20dp"
+        android:textColor="@color/white"
+        android:background="@drawable/primary_button"
         app:layout_constraintTop_toTopOf="@id/new_task_deadline_date"
         app:layout_constraintBottom_toBottomOf="@id/new_task_deadline_date"
         app:layout_constraintStart_toEndOf="@id/new_task_deadline_date"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/new_task_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add"
         android:minHeight="50dp"
         android:layout_marginEnd="20dp"
+        android:textColor="@color/white"
+        android:background="@drawable/primary_button"
         app:layout_constraintStart_toEndOf="@id/new_task_edittext"
         app:layout_constraintTop_toTopOf="@id/new_task_edittext"
         app:layout_constraintBottom_toBottomOf="@id/new_task_edittext"

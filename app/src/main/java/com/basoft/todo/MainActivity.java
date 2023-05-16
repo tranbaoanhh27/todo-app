@@ -100,7 +100,9 @@ public class MainActivity extends AppCompatActivity {
             TaskTodo newTask = new TaskTodo(newTaskTitle);
             Calendar deadline = Calendar.getInstance();
 
-            if (deadlineYear != null && deadlineHour != null) {
+            boolean haveDeadline = deadlineYear != null && deadlineHour != null;
+
+            if (haveDeadline) {
                 deadline.set(Calendar.YEAR, deadlineYear);
                 deadline.set(Calendar.MONTH, deadlineMonth);
                 deadline.set(Calendar.DAY_OF_MONTH, deadlineDay);
@@ -114,20 +116,22 @@ public class MainActivity extends AppCompatActivity {
             dataManager.addTask(newTask);
             taskAdapter.notifyDataSetChanged();
 
-            Notification notification = NotificationHelper.createNotification(
-                    MainActivity.this,
-                    String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
-                    String.format(
-                            "%s %s - %s",
-                            getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
-                            newTaskTitle,
-                            newTask.getDeadlineString(MainActivity.this)
-                    )
-            );
+            if (haveDeadline) {
+                Notification notification = NotificationHelper.createNotification(
+                        MainActivity.this,
+                        String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
+                        String.format(
+                                "%s %s - %s",
+                                getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
+                                newTaskTitle,
+                                newTask.getDeadlineString(MainActivity.this)
+                        )
+                );
 
-            Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
-            notificationTime.add(Calendar.MINUTE, -10);
-            NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
+                Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
+                notificationTime.add(Calendar.MINUTE, -10);
+                NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
+            }
 
             resetViews();
         }
