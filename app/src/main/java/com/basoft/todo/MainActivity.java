@@ -194,4 +194,14 @@ public class MainActivity extends AppCompatActivity {
         this.deadlineMinute = minute;
         newTaskDeadlineTimeButton.setText(String.format("%02d:%02d", hourOfDay, minute));
     }
+
+    public void notifyAdapter() {
+        tasksRecyclerView.post(new Runnable() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void run() {
+                taskAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 }

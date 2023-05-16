@@ -59,11 +59,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             itemView.setOnLongClickListener(TaskViewHolder.this);
         }
 
-        @SuppressLint("NotifyDataSetChanged")
         public void updateOnCheck(boolean isChecked) {
-            DataManager dataManager = DataManager.getInstance();
             setViewsIsDoneState(isChecked);
-            dataManager.setTaskDone(getAdapterPosition(), isChecked);
+            int position = getAdapterPosition();
+            DataManager dataManager = DataManager.getInstance();
+            dataManager.setTaskDone(position, isChecked);
+            ((MainActivity) TaskAdapter.this.context).notifyAdapter();
         }
 
         private void setViewsIsDoneState(boolean isDone) {
@@ -100,12 +101,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 // Just close the dialog
             };
 
-            @SuppressLint("NotifyDataSetChanged")
             DialogInterface.OnClickListener onConfirmListener = (dialog, which) -> {
                 // Delete the task
                 DataManager dataManager = DataManager.getInstance();
-                dataManager.deleteTask(getAdapterPosition());
-                TaskAdapter.this.notifyDataSetChanged();
+                int position = getAdapterPosition();
+                dataManager.deleteTask(position);
+                TaskAdapter.this.notifyItemRemoved(position);
+                TaskAdapter.this.notifyItemRangeChanged(position, TaskAdapter.this.tasks.size());
 
                 // TODO: Un-schedule the notification
             };

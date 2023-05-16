@@ -76,8 +76,8 @@ public class TaskTodo implements Serializable {
     public static class TaskTodoComparator implements Comparator<TaskTodo> {
         @Override
         public int compare(TaskTodo leftTask, TaskTodo rightTask) {
-            if (leftTask.isDone || leftTask.deadline == null) return 1;
-            if (rightTask.isDone || rightTask.deadline == null) return -1;
+            if (leftTask.deadline == null) return 1;
+            if (rightTask.deadline == null) return -1;
             return leftTask.deadline.compareTo(rightTask.deadline);
         }
     }
