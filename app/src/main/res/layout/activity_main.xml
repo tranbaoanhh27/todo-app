@@ -45,6 +45,7 @@
         android:text="@string/select_date"
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/new_task_edittext"
         app:layout_constraintStart_toEndOf="@id/new_task_deadline_label"
         app:layout_constraintEnd_toStartOf="@id/new_task_deadline_time" />

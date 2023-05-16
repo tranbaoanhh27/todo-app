@@ -7,14 +7,15 @@ import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Comparator;
 
 public class TaskTodo implements Serializable {
     private String title;
-    private LocalDateTime deadline;
+    private Calendar deadline;
     private boolean isDone;
 
-    public TaskTodo(String title, LocalDateTime deadline) {
+    public TaskTodo(String title, Calendar deadline) {
         this.title = title;
         this.deadline = deadline;
         this.isDone = false;
@@ -32,11 +33,11 @@ public class TaskTodo implements Serializable {
         this.title = title;
     }
 
-    public LocalDateTime getDeadline() {
+    public Calendar getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(Calendar deadline) {
         this.deadline = deadline;
     }
 
@@ -62,11 +63,11 @@ public class TaskTodo implements Serializable {
         if (deadline != null)
             return String.format(
                     "%02d/%02d/%04d %02d:%02d",
-                    deadline.getDayOfMonth(),
-                    deadline.getMonthValue(),
-                    deadline.getYear(),
-                    deadline.getHour(),
-                    deadline.getMinute()
+                    deadline.get(Calendar.DAY_OF_MONTH),
+                    deadline.get(Calendar.MONTH) + 1,
+                    deadline.get(Calendar.YEAR),
+                    deadline.get(Calendar.HOUR_OF_DAY),
+                    deadline.get(Calendar.MINUTE)
             );
         else
             return context.getString(R.string.no_deadline);

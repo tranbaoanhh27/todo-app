@@ -6,6 +6,7 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Notification;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -31,11 +32,14 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView tasksRecyclerView;
     private Integer deadlineYear, deadlineMonth, deadlineDay, deadlineHour, deadlineMinute;
     private TaskAdapter taskAdapter;
+    public static final String SHARED_PREFERENCES_NAME = "ba_soft_todo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loadDataFromSavedPreferences();
 
         findViews();
 
@@ -46,11 +50,24 @@ public class MainActivity extends AppCompatActivity {
         setupTasksRecyclerView();
     }
 
+    private void loadDataFromSavedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        NotificationHelper.notificationId = sharedPreferences.getInt(NotificationReceiver.NOTIFICATION_ID, 0) + 1;
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         DataManager dataManager = DataManager.getInstance();
         dataManager.saveTasksToLocalStorage(MainActivity.this);
+        saveDataToSharedPreferences();
+    }
+
+    private void saveDataToSharedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(NotificationReceiver.NOTIFICATION_ID, NotificationHelper.notificationId);
+        editor.apply();
     }
 
     private void setupTasksRecyclerView() {
@@ -81,28 +98,36 @@ public class MainActivity extends AppCompatActivity {
             }
 
             TaskTodo newTask = new TaskTodo(newTaskTitle);
+            Calendar deadline = Calendar.getInstance();
 
-            if (deadlineYear != null && deadlineHour != null)
-                newTask = new TaskTodo(newTaskTitle, LocalDateTime.of(
-                        deadlineYear, deadlineMonth + 1, deadlineDay,
-                        deadlineHour, deadlineMinute
-                ));
+            if (deadlineYear != null && deadlineHour != null) {
+                deadline.set(Calendar.YEAR, deadlineYear);
+                deadline.set(Calendar.MONTH, deadlineMonth);
+                deadline.set(Calendar.DAY_OF_MONTH, deadlineDay);
+                deadline.set(Calendar.HOUR_OF_DAY, deadlineHour);
+                deadline.set(Calendar.MINUTE, deadlineMinute);
+                deadline.set(Calendar.SECOND, 0);
+                newTask = new TaskTodo(newTaskTitle, deadline);
+            }
 
             DataManager dataManager = DataManager.getInstance();
             dataManager.addTask(newTask);
             taskAdapter.notifyDataSetChanged();
 
-            String notificationContent = String.format(
-                    "%s\n%s",
-                    newTask.getTitle(),
-                    newTask.getDeadlineString(MainActivity.this)
-            );
             Notification notification = NotificationHelper.createNotification(
                     MainActivity.this,
-                    newTask.getTitle(),
-                    newTask.getDeadlineString(MainActivity.this)
+                    String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
+                    String.format(
+                            "%s %s - %s",
+                            getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
+                            newTaskTitle,
+                            newTask.getDeadlineString(MainActivity.this)
+                    )
             );
-            NotificationHelper.scheduleNotification(MainActivity.this, notification, newTask.getDeadline());
+
+            Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
+            notificationTime.add(Calendar.MINUTE, -10);
+            NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
 
             resetViews();
         }
