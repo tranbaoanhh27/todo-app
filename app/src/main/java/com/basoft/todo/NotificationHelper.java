@@ -3,6 +3,7 @@ package com.basoft.todo;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -31,7 +32,14 @@ public class NotificationHelper {
     }
 
     public static Notification createNotification(Context context, String contentTitle, String contentText) {
+        Intent onNotificationClickIntent = new Intent(context, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addNextIntentWithParentStack(onNotificationClickIntent);
+        PendingIntent onNotificationClickPendingIntent = stackBuilder.getPendingIntent(
+                0, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationReceiver.NOTIFICATION_CHANNEL_ID);
+        builder.setContentIntent(onNotificationClickPendingIntent);
 
         Bitmap bitmapAppIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher_foreground);
         builder.setContentTitle(contentTitle)
