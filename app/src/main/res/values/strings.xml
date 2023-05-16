@@ -15,5 +15,5 @@
     <string name="yes">Yes</string>
     <string name="hey_it_s_time_to_complete_this_task">Hey! It\'s time to complete this task!</string>
     <string name="it_is_only_10_minutes_left_until_your_deadline_on">It is only 10 minutes left until your deadline on</string>
-    <string name="_10_minutes_remaining">" - 10 minutes remaining"</string>
+    <string name="_10_minutes_remaining">10 minutes remaining!</string>
 </resources>
