@@ -17,7 +17,8 @@ public class NotificationHelper {
 
     public static int notificationId = 1;
 
-    public static void scheduleNotification(Context context, Notification notification, Calendar dateTime) {
+    public static int scheduleNotification(Context context, Notification notification, Calendar dateTime) {
+        if (notification == null || dateTime == null) return -1;
         Intent notificationIntent = new Intent(context, NotificationReceiver.class);
         notificationIntent.putExtra(NotificationReceiver.NOTIFICATION_ID, notificationId);
         notificationIntent.putExtra(NotificationReceiver.NOTIFICATION, notification);
@@ -25,10 +26,19 @@ public class NotificationHelper {
                 context, notificationId, notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
-        notificationId++;
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (dateTime != null)
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dateTime.getTimeInMillis(), pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, dateTime.getTimeInMillis(), pendingIntent);
+        return notificationId++;
+    }
+
+    public static void cancelNotification(Context context, int notificationId) {
+        Intent notificationIntent = new Intent(context, NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, notificationId, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     public static Notification createNotification(Context context, String contentTitle, String contentText) {
@@ -41,10 +51,10 @@ public class NotificationHelper {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationReceiver.NOTIFICATION_CHANNEL_ID);
         builder.setContentIntent(onNotificationClickPendingIntent);
 
-        Bitmap bitmapAppIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher_foreground);
+        Bitmap bitmapAppIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
         builder.setContentTitle(contentTitle)
                 .setContentText(contentText)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.brand_check_icon)
                 .setLargeIcon(bitmapAppIcon)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
                 .setAutoCancel(true)

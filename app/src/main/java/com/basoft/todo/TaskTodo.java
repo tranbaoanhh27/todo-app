@@ -14,11 +14,14 @@ public class TaskTodo implements Serializable {
     private String title;
     private Calendar deadline;
     private boolean isDone;
+    private int notificationId;
+    public static final int NOTIFICATION_UNSCHEDULED = -1;
 
     public TaskTodo(String title, Calendar deadline) {
         this.title = title;
         this.deadline = deadline;
         this.isDone = false;
+        notificationId = NOTIFICATION_UNSCHEDULED;
     }
 
     public TaskTodo(String title) {
@@ -71,6 +74,14 @@ public class TaskTodo implements Serializable {
             );
         else
             return context.getString(R.string.no_deadline);
+    }
+
+    public void setNotificationId(int notificationId) {
+        this.notificationId = notificationId;
+    }
+
+    public int getNotificationId() {
+        return notificationId;
     }
 
     public static class TaskTodoComparator implements Comparator<TaskTodo> {

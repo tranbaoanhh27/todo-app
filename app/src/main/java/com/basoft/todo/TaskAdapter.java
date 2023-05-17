@@ -105,11 +105,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 // Delete the task
                 DataManager dataManager = DataManager.getInstance();
                 int position = getAdapterPosition();
+                int notificationId = dataManager.getTasks().get(position).getNotificationId();
                 dataManager.deleteTask(position);
                 TaskAdapter.this.notifyItemRemoved(position);
                 TaskAdapter.this.notifyItemRangeChanged(position, TaskAdapter.this.tasks.size());
 
-                // TODO: Un-schedule the notification
+                // Un-schedule the notification
+                if (notificationId != TaskTodo.NOTIFICATION_UNSCHEDULED)
+                    NotificationHelper.cancelNotification(TaskAdapter.this.context, notificationId);
             };
 
             dialogBuilder

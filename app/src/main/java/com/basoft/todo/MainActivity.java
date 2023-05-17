@@ -110,13 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 deadline.set(Calendar.MINUTE, deadlineMinute);
                 deadline.set(Calendar.SECOND, 0);
                 newTask = new TaskTodo(newTaskTitle, deadline);
-            }
 
-            DataManager dataManager = DataManager.getInstance();
-            dataManager.addTask(newTask);
-            taskAdapter.notifyDataSetChanged();
-
-            if (haveDeadline) {
                 Notification notification = NotificationHelper.createNotification(
                         MainActivity.this,
                         String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
@@ -130,8 +124,13 @@ public class MainActivity extends AppCompatActivity {
 
                 Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
                 notificationTime.add(Calendar.MINUTE, -10);
-                NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
+                int notificationId = NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
+                newTask.setNotificationId(notificationId);
             }
+
+            DataManager dataManager = DataManager.getInstance();
+            dataManager.addTask(newTask);
+            taskAdapter.notifyDataSetChanged();
 
             resetViews();
         }
