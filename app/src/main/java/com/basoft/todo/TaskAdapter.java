@@ -34,12 +34,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return new TaskViewHolder(view);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        TaskTodo task = tasks.get(position);
-        holder.titleTextView.setText(task.getTitle());
-        holder.setViewsIsDoneState(task.isDone());
-        holder.deadlineTextView.setText(task.getDeadlineString(context));
+        holder.updateViews(position);
     }
 
     @Override
@@ -47,43 +45,76 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
-    public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
-        private TextView titleTextView, deadlineTextView, deadlineLabelTextView;
+    public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+        private TextView titleTextView, deadlineTextView, deadlineLabelTextView, statusTextView;
         private CheckBox checkBox;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             findViews(itemView);
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> updateOnCheck(isChecked));
-            itemView.setOnClickListener(TaskViewHolder.this);
             itemView.setOnLongClickListener(TaskViewHolder.this);
         }
 
         public void updateOnCheck(boolean isChecked) {
-            setViewsIsDoneState(isChecked);
             int position = getAdapterPosition();
             DataManager dataManager = DataManager.getInstance();
-            dataManager.setTaskDone(position, isChecked);
-            ((MainActivity) TaskAdapter.this.context).notifyAdapter();
+            int newPosition = dataManager.setTaskDone(position, isChecked);
+            ((MainActivity) TaskAdapter.this.context).notifyItemMoved(position, newPosition);
+            updateViews(newPosition);
         }
 
-        private void setViewsIsDoneState(boolean isDone) {
-            checkBox.setChecked(isDone);
-            if (isDone) {
-                titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                titleTextView.setTextColor(Color.GRAY);
-                deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                deadlineTextView.setTextColor(Color.GRAY);
-                deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                deadlineLabelTextView.setTextColor(Color.GRAY);
-            } else {
-                titleTextView.setPaintFlags(titleTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-                titleTextView.setTextColor(Color.BLACK);
-                deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-                deadlineTextView.setTextColor(Color.BLACK);
-                deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-                deadlineLabelTextView.setTextColor(Color.BLACK);
+        public void updateViews(int taskPosition) {
+            TaskTodo task = tasks.get(taskPosition);
+            if (task != null) {
+                titleTextView.setText(task.getTitle());
+                deadlineTextView.setText(task.getDeadlineString(TaskAdapter.this.context));
+                if (task.isDone()) updateViewsAsDone();
+                else {
+                    updateViewsAsNotDone();
+                    if (task.missedDeadline()) updateViewsAsMissed();
+                    else if (task.isUrgent()) updateViewsAsUrgent();
+                }
             }
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        private void updateViewsAsUrgent() {
+            statusTextView.setVisibility(View.VISIBLE);
+            statusTextView.setText(R.string.urgent);
+            statusTextView.setBackground(context.getDrawable(R.drawable.rounded_yellow_rectangle));
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        private void updateViewsAsMissed() {
+            statusTextView.setVisibility(View.VISIBLE);
+            statusTextView.setText(R.string.missed);
+            statusTextView.setBackground(context.getDrawable(R.drawable.rounded_red_rectangle));
+        }
+
+        private void updateViewsAsNotDone() {
+            checkBox.setChecked(false);
+            titleTextView.setPaintFlags(titleTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            titleTextView.setTextColor(Color.BLACK);
+            deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            deadlineTextView.setTextColor(Color.BLACK);
+            deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            deadlineLabelTextView.setTextColor(Color.BLACK);
+            statusTextView.setVisibility(View.INVISIBLE);
+        }
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        private void updateViewsAsDone() {
+            checkBox.setChecked(true);
+            titleTextView.setPaintFlags(titleTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            titleTextView.setTextColor(Color.GRAY);
+            deadlineTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            deadlineTextView.setTextColor(Color.GRAY);
+            deadlineLabelTextView.setPaintFlags(deadlineTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            deadlineLabelTextView.setTextColor(Color.GRAY);
+            statusTextView.setVisibility(View.VISIBLE);
+            statusTextView.setText(R.string.done);
+            statusTextView.setBackground(context.getDrawable(R.drawable.rounded_green_rectangle));
         }
 
         private void findViews(View itemView) {
@@ -91,6 +122,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             deadlineTextView = itemView.findViewById(R.id.task_item_deadline);
             deadlineLabelTextView = itemView.findViewById(R.id.task_item_deadline_label);
             checkBox = itemView.findViewById(R.id.task_item_checkbox);
+            statusTextView = itemView.findViewById(R.id.task_item_status);
         }
 
         @Override
@@ -125,12 +157,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             dialog.show();
 
             return true;
-        }
-
-        @Override
-        public void onClick(View v) {
-            DataManager dataManager = DataManager.getInstance();
-            updateOnCheck(!dataManager.getTasks().get(getAdapterPosition()).isDone());
         }
     }
 }

@@ -11,13 +11,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.time.LocalDateTime;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView tasksRecyclerView;
     private Integer deadlineYear, deadlineMonth, deadlineDay, deadlineHour, deadlineMinute;
     private TaskAdapter taskAdapter;
+    private TextView greetingTextView;
     public static final String SHARED_PREFERENCES_NAME = "ba_soft_todo";
 
     @Override
@@ -47,7 +50,18 @@ public class MainActivity extends AppCompatActivity {
         newTaskDeadlineTimeButton.setOnClickListener(deadlineTimeSelectListener);
         newTaskSubmitButton.setOnClickListener(newTaskSubmitListener);
 
+        setupGreeting();
         setupTasksRecyclerView();
+    }
+
+    private void setupGreeting() {
+        Calendar today = Calendar.getInstance();
+        Locale locale = Locale.getDefault();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy", locale);
+        String formattedDate = formatter.format(calendar.getTime());
+        greetingTextView.setText(String.format(
+                "%s %s", getString(R.string.today_is), formattedDate
+        ));
     }
 
     private void loadDataFromSavedPreferences() {
@@ -84,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         newTaskDeadlineDateButton = findViewById(R.id.new_task_deadline_date);
         newTaskDeadlineTimeButton = findViewById(R.id.new_task_deadline_time);
         tasksRecyclerView = findViewById(R.id.tasks_recycler_view);
+        greetingTextView = findViewById(R.id.greeting);
     }
 
     private final View.OnClickListener newTaskSubmitListener = new View.OnClickListener() {
@@ -111,21 +126,23 @@ public class MainActivity extends AppCompatActivity {
                 deadline.set(Calendar.SECOND, 0);
                 newTask = new TaskTodo(newTaskTitle, deadline);
 
-                Notification notification = NotificationHelper.createNotification(
-                        MainActivity.this,
-                        String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
-                        String.format(
-                                "%s %s - %s",
-                                getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
-                                newTaskTitle,
-                                newTask.getDeadlineString(MainActivity.this)
-                        )
-                );
+                if (!newTask.missedDeadline()) {
+                    Notification notification = NotificationHelper.createNotification(
+                            MainActivity.this,
+                            String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
+                            String.format(
+                                    "%s %s - %s",
+                                    getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
+                                    newTaskTitle,
+                                    newTask.getDeadlineString(MainActivity.this)
+                            )
+                    );
 
-                Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
-                notificationTime.add(Calendar.MINUTE, -10);
-                int notificationId = NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
-                newTask.setNotificationId(notificationId);
+                    Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
+                    notificationTime.add(Calendar.MINUTE, -10);
+                    int notificationId = NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
+                    newTask.setNotificationId(notificationId);
+                }
             }
 
             DataManager dataManager = DataManager.getInstance();
@@ -194,12 +211,21 @@ public class MainActivity extends AppCompatActivity {
         newTaskDeadlineTimeButton.setText(String.format("%02d:%02d", hourOfDay, minute));
     }
 
-    public void notifyAdapter() {
+    public void notifyDatasetChanged() {
         tasksRecyclerView.post(new Runnable() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void run() {
                 taskAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    public void notifyItemMoved(int fromPosition, int toPosition) {
+        tasksRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                taskAdapter.notifyItemMoved(fromPosition, toPosition);
             }
         });
     }

@@ -2,7 +2,6 @@ package com.basoft.todo;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -55,15 +54,42 @@ public class DataManager {
 
     public void addTask(TaskTodo newTask) {
         tasks.add(newTask);
-        tasks.sort(new TaskTodo.TaskTodoComparator());
-        moveCompletedTasksToTheEnd();
+        moveTaskToCorrectPosition(tasks.size() - 1);
     }
 
-    public void setTaskDone(int position, boolean isDone) {
-        if (position >= tasks.size()) return;
+    public int moveTaskToCorrectPosition(int position) {
+        if (position >= tasks.size()) return -1;
+        TaskTodo task = tasks.remove(position);
+        int correctPosition = 0;
+        if (task.isDone()) {
+            int index = 0;
+            while (index < tasks.size() && !tasks.get(index).isDone()) index++;
+            // Now tasks[index] is done or index == n (which means there is no done task in tasks)
+            while (index < tasks.size()) {
+                TaskTodo.TaskTodoComparator comparator = new TaskTodo.TaskTodoComparator();
+                if (comparator.compare(task, tasks.get(index)) <= 0) break;
+                index++;
+            }
+            correctPosition = index;
+        } else {
+            int end = 0;
+            while (end < tasks.size() && !tasks.get(end).isDone()) end++;
+            int index = 0;
+            while (index < end) {
+                TaskTodo.TaskTodoComparator comparator = new TaskTodo.TaskTodoComparator();
+                if (comparator.compare(task, tasks.get(index)) <= 0) break;
+                index++;
+            }
+            correctPosition = index;
+        }
+        tasks.add(correctPosition, task);
+        return correctPosition;
+    }
+
+    public int setTaskDone(int position, boolean isDone) {
+        if (position >= tasks.size()) return -1;
         tasks.get(position).setDone(isDone);
-        tasks.sort(new TaskTodo.TaskTodoComparator());
-        moveCompletedTasksToTheEnd();
+        return moveTaskToCorrectPosition(position);
     }
 
     public void deleteTask(int position) {
@@ -82,5 +108,10 @@ public class DataManager {
         }
         completedTasks.sort(new TaskTodo.TaskTodoComparator());
         tasks.addAll(completedTasks);
+    }
+
+    public TaskTodo getTask(int position) {
+        if (position >= tasks.size()) return null;
+        return tasks.get(position);
     }
 }

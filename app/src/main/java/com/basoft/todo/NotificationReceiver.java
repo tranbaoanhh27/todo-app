@@ -12,7 +12,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     public static final String NOTIFICATION_ID = "notification_id";
     public static final String NOTIFICATION = "notification";
     public static final String NOTIFICATION_CHANNEL_ID = "id.notification.basoft.todo";
-    public static final CharSequence NOTIFICATION_CHANNEL_NAME = "BASoft Todo Notification";
+    public static final CharSequence NOTIFICATION_CHANNEL_NAME = "Todo deadline reminder";
 
     @Override
     public void onReceive(Context context, Intent intent) {

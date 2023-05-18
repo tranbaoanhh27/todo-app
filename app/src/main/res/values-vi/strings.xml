@@ -17,4 +17,10 @@
     <string name="hey_it_s_time_to_complete_this_task">Này bạn! Giờ là lúc để hoàn thành nhiệm vụ này đấy!</string>
     <string name="it_is_only_10_minutes_left_until_your_deadline_on">Chỉ còn 10 phút nữa là đến hạn của</string>
     <string name="_10_minutes_remaining">Còn 10 phút!</string>
+    <string name="hi">Xin chào</string>
+    <string name="today_is">Hôm nay là</string>
+    <string name="status">Trạng thái</string>
+    <string name="missed">Đã trễ hạn</string>
+    <string name="urgent">Khẩn cấp</string>
+    <string name="done">Hoàn tất</string>
 </resources>

@@ -6,7 +6,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Comparator;
 
@@ -82,6 +81,27 @@ public class TaskTodo implements Serializable {
 
     public int getNotificationId() {
         return notificationId;
+    }
+
+    public boolean hasDeadline() {
+        return deadline != null;
+    }
+
+    public boolean missedDeadline() {
+        if (deadline == null) return false;
+        Calendar today = Calendar.getInstance();
+        return today.compareTo(deadline) >= 0;
+    }
+
+    public boolean isUrgent() {
+        if (deadline == null) return false;
+        Calendar todayAdd24hours = Calendar.getInstance();
+        todayAdd24hours.add(Calendar.HOUR, 24);
+        return todayAdd24hours.compareTo(deadline) >= 0;
+    }
+
+    public boolean isNotDone() {
+        return !isDone;
     }
 
     public static class TaskTodoComparator implements Comparator<TaskTodo> {
