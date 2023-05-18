@@ -97,19 +97,6 @@ public class DataManager {
         tasks.remove(position);
     }
 
-    public void moveCompletedTasksToTheEnd() {
-        ArrayList<TaskTodo> completedTasks = new ArrayList<>();
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).isDone()) {
-                TaskTodo removedTask = tasks.remove(i);
-                completedTasks.add(removedTask);
-                i--;
-            }
-        }
-        completedTasks.sort(new TaskTodo.TaskTodoComparator());
-        tasks.addAll(completedTasks);
-    }
-
     public TaskTodo getTask(int position) {
         if (position >= tasks.size()) return null;
         return tasks.get(position);
