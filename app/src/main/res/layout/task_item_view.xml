@@ -43,8 +43,7 @@
                 android:textColor="#EFEFEF"
                 android:textStyle="bold"
                 android:visibility="invisible"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/task_item_checkbox"
+                app:layout_constraintTop_toTopOf="@id/task_item_title"
                 app:layout_constraintEnd_toEndOf="@id/task_item_checkbox"/>
 
             <TextView
@@ -79,8 +78,7 @@
                 android:scaleX="1.5"
                 android:scaleY="1.5"
                 android:buttonTint="@color/brand_green"
-                app:layout_constraintTop_toBottomOf="@id/task_item_status"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/task_item_deadline"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
