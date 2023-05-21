@@ -23,4 +23,6 @@
     <string name="missed">Đã trễ hạn</string>
     <string name="urgent">Khẩn cấp</string>
     <string name="done">Hoàn tất</string>
+    <string name="notifications_rescheduled">Đã tạo lại các thông báo nhắc nhở</string>
+    <string name="the_notifications_for_the_tasks_have_just_been_rescheduled">Lịch thông báo nhắc nhở đã được tạo lại sau khi khởi động lại thiết bị</string>
 </resources>

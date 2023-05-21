@@ -101,4 +101,8 @@ public class DataManager {
         if (position >= tasks.size()) return null;
         return tasks.get(position);
     }
+
+    public boolean loadedTasks() {
+        return tasks != null;
+    }
 }

@@ -1,6 +1,7 @@
 package com.basoft.todo;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -102,6 +103,25 @@ public class TaskTodo implements Serializable {
 
     public boolean isNotDone() {
         return !isDone;
+    }
+
+    public void scheduleNotification(Context context) {
+        if (hasDeadline() && !missedDeadline()) {
+            Calendar notificationTime = (Calendar) deadline.clone();
+            notificationTime.add(Calendar.MINUTE, -10);
+            Notification notification = NotificationHelper.createNotification(
+                    context,
+                    String.format("%s - %s", title, context.getString(R.string._10_minutes_remaining)),
+                    String.format(
+                            "%s %s - %s",
+                            context.getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
+                            title,
+                            getDeadlineString(context)
+                    )
+            );
+            int notificationId = NotificationHelper.scheduleNotification(context, notification, notificationTime);
+            setNotificationId(notificationId);
+        }
     }
 
     public static class TaskTodoComparator implements Comparator<TaskTodo> {

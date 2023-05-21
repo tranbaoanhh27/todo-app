@@ -6,6 +6,8 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Notification;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Integer deadlineYear, deadlineMonth, deadlineDay, deadlineHour, deadlineMinute;
     private TaskAdapter taskAdapter;
     private TextView greetingTextView;
+    private BootCompleteReceiver bootCompleteReceiver = new BootCompleteReceiver();
     public static final String SHARED_PREFERENCES_NAME = "ba_soft_todo";
 
     @Override
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         Calendar today = Calendar.getInstance();
         Locale locale = Locale.getDefault();
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy", locale);
-        String formattedDate = formatter.format(calendar.getTime());
+        String formattedDate = formatter.format(today.getTime());
         greetingTextView.setText(String.format(
                 "%s %s", getString(R.string.today_is), formattedDate
         ));
@@ -67,6 +70,21 @@ public class MainActivity extends AppCompatActivity {
     private void loadDataFromSavedPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         NotificationHelper.notificationId = sharedPreferences.getInt(NotificationReceiver.NOTIFICATION_ID, 0) + 1;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        intentFilter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
+        this.registerReceiver(bootCompleteReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.unregisterReceiver(bootCompleteReceiver);
     }
 
     @Override
@@ -125,24 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 deadline.set(Calendar.MINUTE, deadlineMinute);
                 deadline.set(Calendar.SECOND, 0);
                 newTask = new TaskTodo(newTaskTitle, deadline);
-
-                if (!newTask.missedDeadline()) {
-                    Notification notification = NotificationHelper.createNotification(
-                            MainActivity.this,
-                            String.format("%s - %s", newTask.getTitle(), getString(R.string._10_minutes_remaining)),
-                            String.format(
-                                    "%s %s - %s",
-                                    getString(R.string.it_is_only_10_minutes_left_until_your_deadline_on),
-                                    newTaskTitle,
-                                    newTask.getDeadlineString(MainActivity.this)
-                            )
-                    );
-
-                    Calendar notificationTime = (Calendar) newTask.getDeadline().clone();
-                    notificationTime.add(Calendar.MINUTE, -10);
-                    int notificationId = NotificationHelper.scheduleNotification(MainActivity.this, notification, notificationTime);
-                    newTask.setNotificationId(notificationId);
-                }
+                newTask.scheduleNotification(MainActivity.this);
             }
 
             DataManager dataManager = DataManager.getInstance();

@@ -22,4 +22,6 @@
     <string name="missed">Missed</string>
     <string name="urgent">Urgent</string>
     <string name="done">Done</string>
+    <string name="notifications_rescheduled">Notifications rescheduled</string>
+    <string name="the_notifications_for_the_tasks_have_just_been_rescheduled">The notifications for the tasks have just been rescheduled after device rebooted</string>
 </resources>
