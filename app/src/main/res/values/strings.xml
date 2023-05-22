@@ -33,4 +33,10 @@
     <string name="save">Save</string>
     <string name="no">No</string>
     <string name="do_you_want_to_save_changes_before_leaving">Do you want to save changes before leaving?</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+    <string name="what_to_do">What To do?</string>
+    <string name="button_add_new_task">Button Add New Task</string>
+    <string name="add_new_task">Add new task</string>
 </resources>
