@@ -43,6 +43,16 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".WidgetUpdateService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.basoft.todo.update_list_view" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".TasksListViewWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
         <receiver android:name=".NotificationReceiver" />
         <receiver
             android:name=".BootCompleteReceiver"

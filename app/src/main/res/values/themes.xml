@@ -8,7 +8,7 @@
 
     <style name="Theme.Todo" parent="Base.Theme.Todo" />
 
-    <style name="Theme.Todo.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+    <style name="Theme.Todo.AppWidgetContainerParent" parent="@android:style/Theme.Light">
         <!-- Radius of the outer bound of widgets to make the rounded corners -->
         <item name="appWidgetRadius">16dp</item>
         <!--

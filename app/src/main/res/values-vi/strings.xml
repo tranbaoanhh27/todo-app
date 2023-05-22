@@ -34,4 +34,11 @@
     <string name="save">Lưu</string>
     <string name="no">Không</string>
     <string name="do_you_want_to_save_changes_before_leaving">Bạn có muốn lưu các thay đổi trước khi rời đi không?</string>
+    <string name="appwidget_text">Ví dụ</string>
+    <string name="add_widget">Tiện ích</string>
+    <string name="app_widget_description">Mô tả tiện ích ứng dụng</string>
+    <string name="what_to_do">Làm gì bây giờ?</string>
+    <string name="button_add_new_task">Nút thêm tác vụ mới</string>
+    <string name="add_new_task">Thêm tác vụ mới</string>
+    <string name="check_as_done">Đánh dấu hoàn thành</string>
 </resources>

@@ -39,4 +39,5 @@
     <string name="what_to_do">What To do?</string>
     <string name="button_add_new_task">Button Add New Task</string>
     <string name="add_new_task">Add new task</string>
+    <string name="check_as_done">Check as done</string>
 </resources>

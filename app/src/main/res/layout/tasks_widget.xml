@@ -4,7 +4,6 @@
     style="@style/Widget.Todo.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_background"
     android:orientation="vertical"
     android:theme="@style/Theme.Todo.AppWidgetContainer">
 
@@ -18,6 +17,7 @@
             android:text="@string/what_to_do"
             android:textSize="20sp"
             android:textStyle="bold"
+            android:layout_gravity="center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"

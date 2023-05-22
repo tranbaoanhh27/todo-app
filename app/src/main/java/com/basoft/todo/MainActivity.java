@@ -156,6 +156,8 @@ public class MainActivity extends AppCompatActivity implements DataChangeObserve
             dataManager.addTask(newTask);
             taskAdapter.notifyDataSetChanged();
 
+            WidgetUpdateService.startActionUpdateTasksListView(MainActivity.this);
+
             resetViews();
         }
     };
