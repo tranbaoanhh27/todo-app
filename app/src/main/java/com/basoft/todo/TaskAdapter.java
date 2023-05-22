@@ -4,13 +4,18 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +53,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
         private TextView titleTextView, deadlineTextView, deadlineLabelTextView, statusTextView;
         private CheckBox checkBox;
+        private Intent editTaskIntent;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,6 +133,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public boolean onLongClick(View v) {
+            Log.d("BaoAnh", v.toString());
+            showLongClickMenu(context, v);
+            return true;
+        }
+
+        public void startEditTaskActivity() {
+            editTaskIntent = new Intent(context, EditTaskActivity.class);
+            editTaskIntent.putExtra("position", getAdapterPosition());
+            context.startActivity(editTaskIntent);
+        }
+
+        public void showLongClickMenu(Context context, View view) {
+            PopupMenu popupMenu = new PopupMenu(context, view);
+            popupMenu.getMenuInflater().inflate(R.menu.task_long_click_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.delete_task) askForDeleteTask(context);
+                else if (itemId == R.id.edit_task) {
+                    startEditTaskActivity();
+                }
+                return true;
+            });
+            popupMenu.show();
+        }
+
+        public void askForDeleteTask(Context context) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
 
             DialogInterface.OnClickListener onCancelListener = (dialog, which) -> {
@@ -134,17 +166,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             };
 
             DialogInterface.OnClickListener onConfirmListener = (dialog, which) -> {
-                // Delete the task
+                // Cancel notification & Delete the task
                 DataManager dataManager = DataManager.getInstance();
                 int position = getAdapterPosition();
-                int notificationId = dataManager.getTasks().get(position).getNotificationId();
+                dataManager.getTasks().get(position).cancelNotification(TaskAdapter.this.context);
                 dataManager.deleteTask(position);
                 TaskAdapter.this.notifyItemRemoved(position);
                 TaskAdapter.this.notifyItemRangeChanged(position, TaskAdapter.this.tasks.size());
-
-                // Un-schedule the notification
-                if (notificationId != TaskTodo.NOTIFICATION_UNSCHEDULED)
-                    NotificationHelper.cancelNotification(TaskAdapter.this.context, notificationId);
             };
 
             dialogBuilder
@@ -155,8 +183,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
             AlertDialog dialog = dialogBuilder.create();
             dialog.show();
-
-            return true;
         }
     }
 }

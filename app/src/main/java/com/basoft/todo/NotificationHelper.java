@@ -54,6 +54,7 @@ public class NotificationHelper {
         Bitmap bitmapAppIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
         builder.setContentTitle(contentTitle)
                 .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText))
                 .setSmallIcon(R.drawable.brand_check_icon)
                 .setLargeIcon(bitmapAppIcon)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)

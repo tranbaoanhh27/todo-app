@@ -25,4 +25,13 @@
     <string name="done">Hoàn tất</string>
     <string name="notifications_rescheduled">Đã tạo lại các thông báo nhắc nhở</string>
     <string name="the_notifications_for_the_tasks_have_just_been_rescheduled">Lịch thông báo nhắc nhở đã được tạo lại sau khi khởi động lại thiết bị</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="delete">Xoá</string>
+    <string name="go_back">Quay lại</string>
+    <string name="edit_task">Chỉnh sửa tác vụ</string>
+    <string name="title">Tiêu đề</string>
+    <string name="save_changes">Lưu thay đổi</string>
+    <string name="save">Lưu</string>
+    <string name="no">Không</string>
+    <string name="do_you_want_to_save_changes_before_leaving">Bạn có muốn lưu các thay đổi trước khi rời đi không?</string>
 </resources>

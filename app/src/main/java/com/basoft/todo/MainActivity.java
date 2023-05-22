@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DataChangeObserver {
 
     private static final Integer DEFAULT_DEADLINE_HOUR = 23, DEFAULT_DEADLINE_MINUTE = 59;
     static Calendar calendar = Calendar.getInstance();
@@ -79,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
         intentFilter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
         this.registerReceiver(bootCompleteReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        notifyDatasetChanged();
     }
 
     @Override
@@ -227,6 +233,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 taskAdapter.notifyItemMoved(fromPosition, toPosition);
+            }
+        });
+    }
+
+    @Override
+    public void onTaskUpdated(int position) {
+        tasksRecyclerView.post(new Runnable() {
+            @Override
+            public void run() {
+                taskAdapter.notifyItemChanged(position);
             }
         });
     }

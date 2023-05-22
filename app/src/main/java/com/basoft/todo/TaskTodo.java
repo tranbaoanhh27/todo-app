@@ -1,16 +1,21 @@
 package com.basoft.todo;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Locale;
 
-public class TaskTodo implements Serializable {
+public class TaskTodo implements Serializable, Cloneable {
     private String title;
     private Calendar deadline;
     private boolean isDone;
@@ -32,16 +37,18 @@ public class TaskTodo implements Serializable {
         return title;
     }
 
-    public void setTitle(String title) {
+    public TaskTodo setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public Calendar getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Calendar deadline) {
+    public TaskTodo setDeadline(Calendar deadline) {
         this.deadline = deadline;
+        return this;
     }
 
     public boolean isDone() {
@@ -63,15 +70,10 @@ public class TaskTodo implements Serializable {
 
     @SuppressLint("DefaultLocale")
     public String getDeadlineString(Context context) {
-        if (deadline != null)
-            return String.format(
-                    "%02d/%02d/%04d %02d:%02d",
-                    deadline.get(Calendar.DAY_OF_MONTH),
-                    deadline.get(Calendar.MONTH) + 1,
-                    deadline.get(Calendar.YEAR),
-                    deadline.get(Calendar.HOUR_OF_DAY),
-                    deadline.get(Calendar.MINUTE)
-            );
+        if (deadline != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy HH:mm", Locale.getDefault());
+            return formatter.format(deadline.getTime());
+        }
         else
             return context.getString(R.string.no_deadline);
     }
@@ -121,6 +123,26 @@ public class TaskTodo implements Serializable {
             );
             int notificationId = NotificationHelper.scheduleNotification(context, notification, notificationTime);
             setNotificationId(notificationId);
+        }
+    }
+
+    public TaskTodo cancelNotification(Context context) {
+        if (notificationId != NOTIFICATION_UNSCHEDULED) {
+            NotificationHelper.cancelNotification(context, notificationId);
+            notificationId = NOTIFICATION_UNSCHEDULED;
+        }
+        return this;
+    }
+
+    @NonNull
+    @Override
+    public TaskTodo clone() {
+        try {
+            TaskTodo clone = (TaskTodo) super.clone();
+            clone.deadline = deadline != null ? (Calendar) deadline.clone() : null;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
         }
     }
 

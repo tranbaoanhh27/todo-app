@@ -14,10 +14,17 @@ public class DataManager {
     private static final String TASKS_FILENAME = "tasks.dat";
     private static ArrayList<TaskTodo> tasks;
     private static DataManager singleInstance;
+    private static DataChangeObserver observer;
 
     public static DataManager getInstance() {
+        return getInstance(null);
+    }
+
+    public static DataManager getInstance(DataChangeObserver dataChangeObserver) {
         if (singleInstance == null)
             singleInstance = new DataManager();
+        if (dataChangeObserver != null)
+            observer = dataChangeObserver;
         return singleInstance;
     }
 
@@ -104,5 +111,14 @@ public class DataManager {
 
     public boolean loadedTasks() {
         return tasks != null;
+    }
+
+    public void updateTask(Context context, int position, TaskTodo task) {
+        tasks.get(position)
+                .setTitle(task.getTitle())
+                .setDeadline(task.getDeadline())
+                .cancelNotification(context)
+                .scheduleNotification(context);
+        if (observer != null) observer.onTaskUpdated(position);
     }
 }

@@ -24,4 +24,13 @@
     <string name="done">Done</string>
     <string name="notifications_rescheduled">Notifications rescheduled</string>
     <string name="the_notifications_for_the_tasks_have_just_been_rescheduled">The notifications for the tasks have just been rescheduled after device rebooted</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="go_back">Go back</string>
+    <string name="edit_task">Edit task</string>
+    <string name="title">Title</string>
+    <string name="save_changes">Save changes</string>
+    <string name="save">Save</string>
+    <string name="no">No</string>
+    <string name="do_you_want_to_save_changes_before_leaving">Do you want to save changes before leaving?</string>
 </resources>
