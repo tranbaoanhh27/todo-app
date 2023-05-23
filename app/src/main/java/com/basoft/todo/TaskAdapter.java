@@ -133,7 +133,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public boolean onLongClick(View v) {
-            Log.d("BaoAnh", v.toString());
             showLongClickMenu(context, v);
             return true;
         }

@@ -9,7 +9,7 @@
     <string name="new_task_s_deadline">Hạn chót của việc cần làm mới</string>
     <string name="select_date">Chọn ngày</string>
     <string name="select_time">Chọn giờ</string>
-    <string name="no_deadline">Không có</string>
+    <string name="no_deadline">Không có hạn chót</string>
     <string name="delete_task_question">Xóa việc cần làm này?</string>
     <string name="are_you_sure_that_you_want_to_delete_this_task">Bạn có chắc bạn muốn xóa việc cần làm này không?</string>
     <string name="cancel">Hủy</string>
@@ -34,4 +34,11 @@
     <string name="save">Lưu</string>
     <string name="no">Không</string>
     <string name="do_you_want_to_save_changes_before_leaving">Bạn có muốn lưu các thay đổi trước khi rời đi không?</string>
+    <string name="appwidget_text">Ví dụ</string>
+    <string name="add_widget">Tiện ích</string>
+    <string name="app_widget_description">Hiển thị danh sách tác vụ chưa hoàn thành trên màn hình chính</string>
+    <string name="what_to_do">Làm gì bây giờ?</string>
+    <string name="button_add_new_task">Nút thêm tác vụ mới</string>
+    <string name="add_new_task">Thêm tác vụ mới</string>
+    <string name="check_as_done">Đánh dấu hoàn thành</string>
 </resources>

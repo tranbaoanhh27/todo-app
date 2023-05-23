@@ -121,4 +121,12 @@ public class DataManager {
                 .scheduleNotification(context);
         if (observer != null) observer.onTaskUpdated(position);
     }
+
+    public ArrayList<TaskTodo> getUndoneTasks() {
+        ArrayList<TaskTodo> undoneTasks = new ArrayList<>();
+        for (TaskTodo task : tasks) {
+            if (task.isNotDone()) undoneTasks.add(task.clone());
+        }
+        return undoneTasks;
+    }
 }

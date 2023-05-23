@@ -49,6 +49,7 @@ public class EditTaskActivity extends AppCompatActivity {
         task.setTitle(titleEdit.getText().toString());
         DataManager dataManager = DataManager.getInstance();
         dataManager.updateTask(EditTaskActivity.this, position, task);
+        WidgetUpdateService.startActionUpdateTasksListView(EditTaskActivity.this);
         finish();
     }
 

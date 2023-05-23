@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements DataChangeObserve
         DataManager dataManager = DataManager.getInstance();
         dataManager.saveTasksToLocalStorage(MainActivity.this);
         saveDataToSharedPreferences();
+        WidgetUpdateService.startActionUpdateTasksListView(MainActivity.this);
     }
 
     private void saveDataToSharedPreferences() {
