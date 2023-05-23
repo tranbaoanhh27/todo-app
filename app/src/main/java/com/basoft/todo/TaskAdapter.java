@@ -68,7 +68,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             int newPosition = dataManager.setTaskDone(position, isChecked);
             ((MainActivity) TaskAdapter.this.context).notifyItemMoved(position, newPosition);
             updateViews(newPosition);
-            WidgetUpdateService.startActionUpdateTasksListView(context);
         }
 
         public void updateViews(int taskPosition) {
@@ -134,7 +133,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public boolean onLongClick(View v) {
-            Log.d("BaoAnh", v.toString());
             showLongClickMenu(context, v);
             return true;
         }
@@ -174,7 +172,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 dataManager.deleteTask(position);
                 TaskAdapter.this.notifyItemRemoved(position);
                 TaskAdapter.this.notifyItemRangeChanged(position, TaskAdapter.this.tasks.size());
-                WidgetUpdateService.startActionUpdateTasksListView(context);
             };
 
             dialogBuilder

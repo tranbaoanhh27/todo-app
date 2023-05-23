@@ -12,7 +12,8 @@ public class TasksListViewWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         DataManager dataManager = DataManager.getInstance();
-        return new TasksWidgetListViewFactory(dataManager.getTasks(), getApplicationContext());
+        if (!dataManager.loadedTasks()) dataManager.loadTasksFromLocalStorage(getApplicationContext());
+        return new TasksWidgetListViewFactory(dataManager.getUndoneTasks(), getApplicationContext());
     }
 }
 
@@ -22,21 +23,22 @@ class TasksWidgetListViewFactory implements RemoteViewsService.RemoteViewsFactor
     private Context context;
 
     public TasksWidgetListViewFactory(ArrayList<TaskTodo> tasks, Context context) {
-        Log.d("tranbaoanh", "TasksWidgetListViewFactory");
-        Log.d("tranbaoanh", tasks.toString());
-        Log.d("tranbaoanh", context.toString());
         this.tasks = tasks;
         this.context = context;
     }
 
     @Override
     public void onCreate() {
-
+        DataManager dataManager = DataManager.getInstance();
+        if (!dataManager.loadedTasks()) dataManager.loadTasksFromLocalStorage(context);
+        tasks = dataManager.getUndoneTasks();
     }
 
     @Override
     public void onDataSetChanged() {
-        Log.d("tranbaoanh", "TasksWidgetListViewFactory::onDataSetChanged");
+        DataManager dataManager = DataManager.getInstance();
+        if (!dataManager.loadedTasks()) dataManager.loadTasksFromLocalStorage(context);
+        tasks = dataManager.getUndoneTasks();
     }
 
     @Override
@@ -55,8 +57,6 @@ class TasksWidgetListViewFactory implements RemoteViewsService.RemoteViewsFactor
         TaskTodo task = tasks.get(position);
         views.setTextViewText(R.id.widget_item_title, task.getTitle());
         views.setTextViewText(R.id.widget_item_deadline, task.getDeadlineString(context));
-        int checkboxImageResource = task.isDone() ? R.drawable.checked : R.drawable.unchecked;
-        views.setImageViewResource(R.id.widget_item_checkbox, checkboxImageResource);
         return views;
     }
 
@@ -67,16 +67,16 @@ class TasksWidgetListViewFactory implements RemoteViewsService.RemoteViewsFactor
 
     @Override
     public int getViewTypeCount() {
-        return 3;
+        return 2;
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 }

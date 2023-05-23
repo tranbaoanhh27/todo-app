@@ -9,7 +9,7 @@
     <string name="new_task_s_deadline">Hạn chót của việc cần làm mới</string>
     <string name="select_date">Chọn ngày</string>
     <string name="select_time">Chọn giờ</string>
-    <string name="no_deadline">Không có</string>
+    <string name="no_deadline">Không có hạn chót</string>
     <string name="delete_task_question">Xóa việc cần làm này?</string>
     <string name="are_you_sure_that_you_want_to_delete_this_task">Bạn có chắc bạn muốn xóa việc cần làm này không?</string>
     <string name="cancel">Hủy</string>

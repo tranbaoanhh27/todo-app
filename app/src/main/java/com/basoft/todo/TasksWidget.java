@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 /**
@@ -16,7 +17,7 @@ public class TasksWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.tasks_widget);
-        setupOnWidgetTitleClick(context, views);
+        setupOnWidgetTitleAndAddTaskClick(context, views);
 
         Intent tasksListViewServiceIntent = new Intent(context, TasksListViewWidgetService.class);
         views.setRemoteAdapter(R.id.widget_tasks_list_view, tasksListViewServiceIntent);
@@ -30,13 +31,15 @@ public class TasksWidget extends AppWidgetProvider {
         }
     }
 
-    private static void setupOnWidgetTitleClick(Context context, RemoteViews views) {
+    private static void setupOnWidgetTitleAndAddTaskClick(Context context, RemoteViews views) {
         Intent openAppIntent = new Intent(context, MainActivity.class);
+        openAppIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent openAppPendingIntent = PendingIntent.getActivity(
                 context, 0, openAppIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         views.setOnClickPendingIntent(R.id.widget_title, openAppPendingIntent);
+        views.setOnClickPendingIntent(R.id.widget_add_task, openAppPendingIntent);
     }
 
     @Override
