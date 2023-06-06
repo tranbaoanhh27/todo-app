@@ -8,7 +8,7 @@
 * Tasks list on Homescreen Widget.
 
 ## Screenshots
-<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/d40075ec-c655-42d4-8b1e-da39803ef673" width="200px" />
-<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/7d3702f3-e858-457c-935f-ac8eed60a73d" width="200px" />
-<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/3988ee4c-0aa1-4b51-ad33-b9d7378dba3c" width="200px" />
-<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/2201f247-6efc-4b1b-a097-51b08e33f348" width="200px" />
+<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/309145b2-b8b4-404c-a30e-26e13e382655" width="200px" />
+<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/4a7f8382-63df-485e-b5be-2e0e64054f05" width="200px" />
+<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/453fbdfd-cfc7-443a-80aa-c3abcd1a8bb4" width="200px" />
+<img src="https://github.com/tranbaoanhh27/todo-app/assets/108526097/426203fe-baaf-46e5-b0cd-ae62623a5d09" width="200px" />
